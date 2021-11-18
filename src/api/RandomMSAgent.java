@@ -48,7 +48,6 @@ public class RandomMSAgent extends MSAgent {
 			else {//if(feedback != 0 && feedback != anzNachbarn(x, y)){	// mines are present in the neighborhood
 				// TODO: something cool
 				//crateFormula;
-				System.out.println("ready");
 				int erg[][] = getClauses(anzNachbarn(x, y), feedback, x, y);
 				for(int i = 0; i < erg.length; i++){        //fill array with valid values
 					for(int j = 0; j < erg[i].length; j++){
@@ -56,7 +55,6 @@ public class RandomMSAgent extends MSAgent {
 					}
 					System.out.println();
 				}
-				System.out.println("fertig");
 				//use SAT solver
 						//x = rand.nextInt(numOfCols);
 						//y = rand.nextInt(numOfRows);
@@ -207,7 +205,6 @@ public class RandomMSAgent extends MSAgent {
 	 * @return al formula
 	 */
 	public int[][] getClauses(int n, int anzMinen, int x, int y){
-		System.out.println("Los geht's");
 		int[] arr;
 		int rows = 0;
 		for(int i = 0; i <= n; i++){
@@ -232,7 +229,7 @@ public class RandomMSAgent extends MSAgent {
 				}
 				else{
 					arr = new int[] {1, 2, 4};
-				}
+				} break;
 			case 5:
 				if (x == 0){
 					arr = new int[] {4, 5, 6, 7, 8};
@@ -245,8 +242,9 @@ public class RandomMSAgent extends MSAgent {
 				}
 				else{ //y == this.field.getNumOfRows()-1
 					arr = new int[] {1, 2, 3, 4, 5};
-				}
+				} break;
 			default:
+				System.out.println("Default");
 				arr = new int[] {1, 2, 3, 4, 5, 6, 7, 8};
 		}
 
@@ -263,6 +261,6 @@ public class RandomMSAgent extends MSAgent {
 		RandomMSAgent r = new RandomMSAgent(f);
 		//System.out.println(r.anzNachbarn(1,1));
 		r.solve();
-
+		System.out.println(r.anzNachbarn(0,0));
 	}
 }
