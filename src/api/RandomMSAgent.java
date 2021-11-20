@@ -31,7 +31,7 @@ public class RandomMSAgent extends MSAgent {
     }
 
     public static void main(String[] args) {
-        MSField f = new MSField("fields/" + "baby1-3x3-0.txt");
+        MSField f = new MSField("fields/" + "baby2-3x3-1.txt");
         RandomMSAgent r = new RandomMSAgent(f);
         //System.out.println(r.anzNachbarn(1,1));
         //r.solve();
@@ -43,13 +43,30 @@ public class RandomMSAgent extends MSAgent {
 			System.out.println();
 		}*/
 
-        r.updateKnowledgeBase(0, 0, 3);
-        System.out.println(r.knowledgeBase.size());
+       // r.updateKnowledgeBase(2, 2, 2);
+
+//        int[][] test ={ {-2 , 4, 5},
+//        {2, -4 , 5},
+//        {2, 4, -5},
+//        {-2, -4, 5},
+//        {-2, 4, -5},
+//        {2, -4, -5},
+//        {2,4,5}};
+//        for (int i = 0; i < test.length;i++){
+//            r.knowledgeBase.add(test[i]);
+//        }
+
+
+       /* System.out.println(r.knowledgeBase.size());
         for (int[] array : r.knowledgeBase) {
             System.out.println(Arrays.toString(array));
         }
-		System.out.println(r.satSolve(r.knowledgeBase));
+		System.out.println(r.satSolve(r.knowledgeBase));*/
 
+        r.solve();
+        for (int i = 1; i < 481; i++) {
+        System.out.println(i + ":" + Arrays.toString(r.toCoordinate(i)));
+        }
     }
 
     @Override
@@ -78,6 +95,29 @@ public class RandomMSAgent extends MSAgent {
                 //int[] erg = sat(x,y ,feedback); // TODO: pass values of the field which should be uncovered next
                 //x = erg[0];
                 //y = erg[1];
+
+                int next = 0; // deault wert. MUSS vor naechstem Durchgang geaendert werden!!
+                this.updateKnowledgeBase(x, y, feedback);
+                int anzNach = this.anzNachbarn(x, y);
+                int[] nachbarn = this.getClauses(anzNach, toLiteral(x, y), x, y);
+                for(int i = 0; i < nachbarn.length; i++){
+                    int[] coordinates = this.toCoordinate(nachbarn[i]);
+                    if(this.uncovered[coordinates[0]][coordinates[1]] != -2){
+                        continue;
+                    }
+                    this.knowledgeBase.add(new int[] {nachbarn[i] * -1});
+                    //this.knowledgeBase.forEach((n) -> {System.out.println(Arrays.toString(n));});
+                    if(this.satSolve(this.knowledgeBase)){
+                        next = nachbarn[i];
+                        this.knowledgeBase.remove(this.knowledgeBase.size()-1);
+                        break;
+                    }
+                    this.knowledgeBase.remove(this.knowledgeBase.size()-1);
+                }
+                System.out.println(next);
+                int[] erg = this.toCoordinate(next); // TODO: pass values of the field which should be uncovered next
+                x = erg[0];
+                y = erg[1];
             }
 
 
@@ -173,7 +213,6 @@ public class RandomMSAgent extends MSAgent {
 	}
 	*/
     public boolean satSolve(ArrayList<int[]> input) {
-
         final int MAXVAR = 500;
         final int NBCLAUSES = input.size();
 
@@ -202,6 +241,8 @@ public class RandomMSAgent extends MSAgent {
         IProblem problem = solver;
         try {
             if (problem.isSatisfiable()) {
+                System.out.println("Modell gefunden: " + Arrays.toString(solver.model()));
+
                 return true;
             } else {
                 return false;
@@ -285,7 +326,6 @@ public class RandomMSAgent extends MSAgent {
                 arr = new int[]{l + 1, l - 1, l + cols, l + cols + 1, l + cols - 1, l - cols, l - cols + 1, l - cols - 1};
                 break;
         }
-
         return arr;
     }
 
