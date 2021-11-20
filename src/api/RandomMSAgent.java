@@ -2,6 +2,7 @@ package api;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import org.sat4j.core.VecInt;
 import org.sat4j.pb.SolverFactory;
 import org.sat4j.specs.ContradictionException;
@@ -18,52 +19,74 @@ import java.util.Random;
  */
 public class RandomMSAgent extends MSAgent {
 
-	private Random rand;
-	private boolean displayActivated = true;
-	private boolean firstDecision = true;
-	private int[][] uncovered;
-	private ArrayList<int[]> knowledgeBase = new ArrayList<int[]>();
+    private final Random rand;
+    private final ArrayList<int[]> knowledgeBase = new ArrayList<int[]>();
+    private boolean displayActivated = true;
+    private boolean firstDecision = true;
+    private int[][] uncovered;
 
-	public RandomMSAgent(MSField field) {
-		super(field);
-		this.rand = new Random();
-	}
+    public RandomMSAgent(MSField field) {
+        super(field);
+        this.rand = new Random();
+    }
 
-	@Override
-	public boolean solve() {
+    public static void main(String[] args) {
+        MSField f = new MSField("fields/" + "baby1-3x3-0.txt");
+        RandomMSAgent r = new RandomMSAgent(f);
+        //System.out.println(r.anzNachbarn(1,1));
+        //r.solve();
+		/*for(int i = 0; i < r.field.getNumOfRows(); i++){
+			for (int j = 0; j < r.field.getNumOfCols(); j++){
+				//System.out.print(r.updateKnowledgeBase(j,i,0) + ", ");
 
-		int numOfRows = this.field.getNumOfRows();
-		int numOfCols = this.field.getNumOfCols();
-		uncovered = new int[numOfCols][numOfRows];
-		for (int i = 0; i < uncovered.length; i++) {
-			Arrays.fill(uncovered[i], -2);
-		}
-
-		int x = 0, y = 0, feedback = 0;
-
-		do {
-			if (displayActivated) {
-				System.out.println(field);
 			}
-			if (firstDecision) {
-				firstDecision = false;
-			} else {
-				//int erg[][] = getClauses(anzNachbarn(x, y), x, y);
+			System.out.println();
+		}*/
 
-				//use SAT solver
+        r.updateKnowledgeBase(0, 0, 3);
+        System.out.println(r.knowledgeBase.size());
+        for (int[] array : r.knowledgeBase) {
+            System.out.println(Arrays.toString(array));
+        }
+		System.out.println(r.satSolve(r.knowledgeBase));
 
-				//int[] erg = sat(x,y ,feedback); // TODO: pass values of the field which should be uncovered next
-				//x = erg[0];
-				//y = erg[1];
-			}
+    }
+
+    @Override
+    public boolean solve() {
+
+        int numOfRows = this.field.getNumOfRows();
+        int numOfCols = this.field.getNumOfCols();
+        uncovered = new int[numOfCols][numOfRows];
+        for (int i = 0; i < uncovered.length; i++) {
+            Arrays.fill(uncovered[i], -2);
+        }
+
+        int x = 0, y = 0, feedback = 0;
+
+        do {
+            if (displayActivated) {
+                System.out.println(field);
+            }
+            if (firstDecision) {
+                firstDecision = false;
+            } else {
+                //int erg[][] = getClauses(anzNachbarn(x, y), x, y);
+
+                //use SAT solver
+
+                //int[] erg = sat(x,y ,feedback); // TODO: pass values of the field which should be uncovered next
+                //x = erg[0];
+                //y = erg[1];
+            }
 
 
-			if (displayActivated) {
-				System.out.println("Uncovering (" + x + "," + y + ")");
-			}
+            if (displayActivated) {
+                System.out.println("Uncovering (" + x + "," + y + ")");
+            }
 
-			feedback = field.uncover(x, y);
-			uncovered[x][y] = feedback;
+            feedback = field.uncover(x, y);
+            uncovered[x][y] = feedback;
 			/*for (int i = 0; i < uncovered.length; i++) {
 				for (int j = 0; j < uncovered[i].length ; j++) {
 					System.out.println("(" + i + ", " + j + ") = " + uncovered[i][j]);
@@ -71,35 +94,38 @@ public class RandomMSAgent extends MSAgent {
 			}*/
 
 
-		} while (feedback >= 0 && !field.solved());
+        } while (feedback >= 0 && !field.solved());
 
-		if (field.solved()) {
-			if (displayActivated) {
-				System.out.println("Solved the field");
-			}
-			return true;
-		} else {
-			if (displayActivated) {
-				System.out.println("BOOM!");
-			}
-			return false;
-		}
-	}
+        if (field.solved()) {
+            if (displayActivated) {
+                System.out.println("Solved the field");
+            }
+            return true;
+        } else {
+            if (displayActivated) {
+                System.out.println("BOOM!");
+            }
+            return false;
+        }
+    }
 
-	/**
-	 * uncovers all neighboring fields of the current field
-	 * @param x x-Coordinate of current field.
-	 * @param y y-Coordinate of current field.
-	 */
-	public void uncoverAll(int x, int y){
+    /**
+     * uncovers all neighboring fields of the current field
+     *
+     * @param x x-Coordinate of current field.
+     * @param y y-Coordinate of current field.
+     */
+    public void uncoverAll(int x, int y) {
+        // TODO
+    }
 
-	}
-
-	/**
-	 * Solves al formula.
-	 * @param numMines number of mines mentioned at current field.
-	 * @return
-	 */
+    /*
+     * Solves al formula.
+     *
+     * @param numMines number of mines mentioned at current field.
+     * @return
+     */
+	/*
 	public int[] sat(int x, int y, int numMines){
 		final int MAXVAR = 1000000;
 		final int NBCLAUSES = 55;
@@ -145,155 +171,150 @@ public class RandomMSAgent extends MSAgent {
 		}
 		return new int[] {x, y};
 	}
+	*/
+    public boolean satSolve(ArrayList<int[]> input) {
 
-	/**
-	 * calculates the number of neighboring fields of the current field.
-	 * @param x x-Coordinate of current field.
-	 * @param y y-Coordinate of current field.
-	 * @return number of neighboring fields
-	 */
-	public int anzNachbarn(int x, int y){
-		int res = 8;
-		int maxRow = field.getNumOfRows()-1;
-		int maxCol = field.getNumOfCols()-1;
+        final int MAXVAR = 500;
+        final int NBCLAUSES = input.size();
 
-		if(x == 0 || x == maxCol){
-			res -= 3;
-			if(y == 0 || y == maxRow){
-				res -= 2;
-			}
-			return res;
-		}
+        ISolver solver = SolverFactory.newDefault();
 
-		if(y == 0 || y == maxRow){
-			res -= 3;
-			if(x == 0 || x == maxCol){
-				res -= 2;
-			}
-			return res;
-		}
+        // prepare the solver to accept MAXVAR variables. MANDATORY for MAXSAT solving
+        solver.newVar(MAXVAR);
+        solver.setExpectedNumberOfClauses(NBCLAUSES);
+        // Feed the solver using Dimacs format, using arrays of int
+        // (best option to avoid dependencies on SAT4J IVecInt)
+        for (int i = 0; i < input.size(); i++) {
+            int[] clause = input.get(i);// get the clause from somewhere
+            // the clause should not contain a 0, only integer (positive or negative)
+            // with absolute values less or equal to MAXVAR
+            // e.g. int [] clause = {1, -3, 7}; is fine
+            // while int [] clause = {1, -3, 7, 0}; is not fine
+            try {
+                solver.addClause(new VecInt(clause)); // adapt Array to IVecInt
+            } catch (ContradictionException e) {
+				System.out.println("contradiction detected, returning false");
+				return false;
+            }
+        }
 
-		return res;
-	}
+        // we are done. Working now on the IProblem interface
+        IProblem problem = solver;
+        try {
+            if (problem.isSatisfiable()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
-	public void activateDisplay() {
-		this.displayActivated = true;
+    /**
+     * calculates the number of neighboring fields of the current field.
+     *
+     * @param x x-Coordinate of current field.
+     * @param y y-Coordinate of current field.
+     * @return number of neighboring fields
+     */
+    public int anzNachbarn(int x, int y) {
+        int res = 8;
+        int maxRow = field.getNumOfRows() - 1;
+        int maxCol = field.getNumOfCols() - 1;
 
-	}
+        if (x == 0 || x == maxCol || y == 0 || y == maxRow) {
+            res -= 3;
+            if (y == 0 && x == 0 || y == 0 && x == maxCol || x == 0 && y == maxRow || x == maxCol && y == maxRow) {
+                res -= 2;
+            }
+            return res;
+        }
+        return res;
+    }
 
-	public void deactivateDisplay() {
-		this.displayActivated = false;
-	}
+    public void activateDisplay() {
+        this.displayActivated = true;
 
-	/**
-	 * calculates how many rows the formula has if the current field has n neighbors.
-	 * @param n number of neighbors
-	 * @return number of rows
-	 */
-	static int fac(int n){
-		if(n <= 1){
-			return 1;
-		}
-		return n * fac(n-1);
-	}
+    }
 
-	/**
-	 * calculates the al formula for the sat solver.
-	 // * @param arr array with neighboring fields
-	 * @param n  number of neighbors
-	 * @param l Literal
-	 * @param x x-Coordinate of current field.
-	 * @param y y-Coordinate of current field.
-	 * @return al formula
-	 */
-	public int[] getClauses(int n, int l, int x, int y){
-		System.out.println("Feld: " + x + ", " + y);
-		int[] arr;
-		int cols = this.field.getNumOfCols();
+    public void deactivateDisplay() {
+        this.displayActivated = false;
+    }
 
-		switch(n){
-			case 3:
-				if (x == 0 && y == 0){	// top left
-					arr = new int[] {l + 1, l + cols, l + cols + 1};
-				}
-				else if(x == this.field.getNumOfCols()-1 && y == 0){	// top right
-					arr = new int[] {l - 1, l + cols, l + cols - 1};
-				}
-				else if (y == this.field.getNumOfRows()-1 && x == 0){	// bottom left
-					arr = new int[] {l - cols, l - cols + 1, l + 1};
-				}
-				else{	// bottom right
-					arr = new int[] {l - cols, l - cols - 1, l - 1};
-				}
-				break;
-			case 5:
-				if (x == 0){	//left border
-					arr = new int[] {l - cols, l - cols + 1, l + 1, l + cols, l + cols + 1};
-				}
-				else if (y == 0){	//top border
-					arr = new int[] {l - 1, l + 1, l + cols - 1, l + cols, l + cols + 1};
-				}
-				else if(x == this.field.getNumOfCols()-1) {		//right border
-					arr = new int[] {l - cols - 1, l  - cols, l - 1, l + cols - 1, l + cols};
-				}
-				else{ //y == this.field.getNumOfRows()-1	//bottom border
-					arr = new int[] { l - 1, l - cols - 1, l - cols, l - cols + 1, l + 1};
-				}
-				break;
-			default:
-				arr = new int[] {l + 1, l - 1, l + cols, l + cols + 1, l + cols - 1, l - cols, l - cols + 1, l - cols - 1};
-				break;
-		}
+    /**
+     * calculates the al formula for the sat solver.
+     * // * @param arr array with neighboring fields
+     *
+     * @param n number of neighbors
+     * @param l Literal
+     * @param x x-Coordinate of current field.
+     * @param y y-Coordinate of current field.
+     * @return al formula
+     */
+    public int[] getClauses(int n, int l, int x, int y) {
+        System.out.println("Feld: " + x + ", " + y);
+        int[] arr;
+        int cols = this.field.getNumOfCols();
 
-		return arr;
-	}
+        switch (n) {
+            case 3:
+                if (x == 0 && y == 0) {    // top left
+                    arr = new int[]{l + 1, l + cols, l + cols + 1};
+                } else if (x == this.field.getNumOfCols() - 1 && y == 0) {    // top right
+                    arr = new int[]{l - 1, l + cols, l + cols - 1};
+                } else if (y == this.field.getNumOfRows() - 1 && x == 0) {    // bottom left
+                    arr = new int[]{l - cols, l - cols + 1, l + 1};
+                } else {    // bottom right
+                    arr = new int[]{l - cols, l - cols - 1, l - 1};
+                }
+                break;
+            case 5:
+                if (x == 0) {    //left border
+                    arr = new int[]{l - cols, l - cols + 1, l + 1, l + cols, l + cols + 1};
+                } else if (y == 0) {    //top border
+                    arr = new int[]{l - 1, l + 1, l + cols - 1, l + cols, l + cols + 1};
+                } else if (x == this.field.getNumOfCols() - 1) {        //right border
+                    arr = new int[]{l - cols - 1, l - cols, l - 1, l + cols - 1, l + cols};
+                } else { //y == this.field.getNumOfRows()-1	//bottom border
+                    arr = new int[]{l - 1, l - cols - 1, l - cols, l - cols + 1, l + 1};
+                }
+                break;
+            default:
+                arr = new int[]{l + 1, l - 1, l + cols, l + cols + 1, l + cols - 1, l - cols, l - cols + 1, l - cols - 1};
+                break;
+        }
 
-	/**
-	 * Updates the KB with newly discovered clauses.
-	 * @param x x-Coordinate of current field.
-	 * @param y y-Coordinate of current field.
-	 * @param anzMinen number of mines surrounding the current field.
-	 */
-	public void updateKnowledgeBase(int x, int y, int anzMinen){
-		int literal = (y * this.field.getNumOfCols() + x) + 1;
-		int[] arr;
-		if(x == 0 && y == 0 || x == field.getNumOfCols() - 1 && y == 0 || x == 0 && y == field.getNumOfRows() - 1 || 	//Corner fields
-				x == field.getNumOfCols() - 1 && y == field.getNumOfRows() - 1){
-			arr = getClauses(3,literal,x,y);
-		}
-		else if (x == 0 || y == 0 || x == field.getNumOfCols() - 1 || y == field.getNumOfRows() - 1){ // Edge fields but no corner fields
-			arr = getClauses(5,literal,x,y);
-		}
-		else { // alle anderen
-			arr = getClauses(8,literal,x,y);
-		}
-		System.out.println("arr: " + Arrays.toString(arr));
-		for (int i = 1; i < arr.length + 1; i++) {
-			if(i != anzMinen) {
-				knowledgeBase.addAll(api.Permutation.computeClauses(arr, arr.length, i));
-			}
-		}
-		if(anzMinen != 0){
-			knowledgeBase.add(arr);
-		}
-	}
+        return arr;
+    }
 
-	public static void main(String[] args) {
-		MSField f = new MSField("fields/" + "baby1-3x3-0.txt");
-		RandomMSAgent r = new RandomMSAgent(f);
-		//System.out.println(r.anzNachbarn(1,1));
-		//r.solve();
-		/*for(int i = 0; i < r.field.getNumOfRows(); i++){
-			for (int j = 0; j < r.field.getNumOfCols(); j++){
-				//System.out.print(r.updateKnowledgeBase(j,i,0) + ", ");
+    /**
+     * Updates the KB with newly discovered clauses.
+     *
+     * @param x        x-Coordinate of current field.
+     * @param y        y-Coordinate of current field.
+     * @param anzMinen number of mines surrounding the current field.
+     */
+    public void updateKnowledgeBase(int x, int y, int anzMinen) {
+        int literal = (y * this.field.getNumOfCols() + x) + 1;
+        int[] arr;
+        if (x == 0 && y == 0 || x == field.getNumOfCols() - 1 && y == 0 || x == 0 && y == field.getNumOfRows() - 1 ||    //Corner fields
+                x == field.getNumOfCols() - 1 && y == field.getNumOfRows() - 1) {
+            arr = getClauses(3, literal, x, y);
+        } else if (x == 0 || y == 0 || x == field.getNumOfCols() - 1 || y == field.getNumOfRows() - 1) { // Edge fields but no corner fields
+            arr = getClauses(5, literal, x, y);
+        } else { // alle anderen
+            arr = getClauses(8, literal, x, y);
+        }
 
-			}
-			System.out.println();
-		}*/
-		r.updateKnowledgeBase(0,0,1);
-		System.out.println(r.knowledgeBase.size());
-		for(int[] array : r.knowledgeBase){
-			System.out.println(Arrays.toString(array));
-		}
-	}
+        for (int i = 1; i < arr.length + 1; i++) {
+            if (i != anzMinen) {
+                knowledgeBase.addAll(api.Permutation.computeClauses(arr, arr.length, i));
+            }
+        }
+        if (anzMinen != 0) {
+            knowledgeBase.add(arr);
+        }
+    }
 }
