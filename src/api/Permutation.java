@@ -28,11 +28,18 @@ class Permutation {
     {
         // negates literals
         if (index == r) {
-            for (int j = 0; j < data.length; j++){
-                data[j] = -1 * Math.abs(data[j]);
+
+            int[] copy = new int[arr.length];
+            System.arraycopy(arr, 0, copy, 0, copy.length);
+            //copy{2,-4,5}
+            //data{-4}
+            //Arrays.sort(data);
+            for (int j = 0, k = 0; j < arr.length && k < data.length; j++) {
+                if (Math.abs(copy[j]) == Math.abs(data[k])){
+                    copy[j] = -1 * Math.abs(copy[j]);
+                    k++;
+                }
             }
-            int[] copy = new int[data.length];
-            System.arraycopy(data, 0, copy, 0, copy.length);
             res.add(copy);
             return;
         }

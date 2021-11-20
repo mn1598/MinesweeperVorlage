@@ -127,6 +127,7 @@ public class RandomMSAgent extends MSAgent {
 
             feedback = field.uncover(x, y);
             uncovered[x][y] = feedback;
+
 			/*for (int i = 0; i < uncovered.length; i++) {
 				for (int j = 0; j < uncovered[i].length ; j++) {
 					System.out.println("(" + i + ", " + j + ") = " + uncovered[i][j]);
@@ -337,7 +338,7 @@ public class RandomMSAgent extends MSAgent {
      * @param anzMinen number of mines surrounding the current field.
      */
     public void updateKnowledgeBase(int x, int y, int anzMinen) {
-        int literal = (y * this.field.getNumOfCols() + x) + 1;
+        int literal = toLiteral(x,y);
         int[] arr;
         if (x == 0 && y == 0 || x == field.getNumOfCols() - 1 && y == 0 || x == 0 && y == field.getNumOfRows() - 1 ||    //Corner fields
                 x == field.getNumOfCols() - 1 && y == field.getNumOfRows() - 1) {
@@ -356,5 +357,22 @@ public class RandomMSAgent extends MSAgent {
         if (anzMinen != 0) {
             knowledgeBase.add(arr);
         }
+    }
+
+    /**
+     * For given coordinates, returns literal value of a field
+     * @param x x coordinate
+     * @param y y coordinate
+     * @return literal value
+     */
+    public int toLiteral(int x, int y){
+        return y * this.field.getNumOfCols() + x + 1;
+    }
+
+    public int[] toCoordinate(int literal){
+        int[] res = new int[2];
+        res[1] = (literal - 1) / this.field.getNumOfCols();
+        res[0] = literal - res[1] * this.field.getNumOfCols() - 1;
+        return res;
     }
 }
