@@ -31,7 +31,6 @@ class Permutation {
             for (int j = 0; j < data.length; j++){
                 data[j] = -1 * Math.abs(data[j]);
             }
-            System.out.println("data :"  + Arrays.toString(data));
             int[] copy = new int[data.length];
             System.arraycopy(data, 0, copy, 0, copy.length);
             res.add(copy);
@@ -85,9 +84,6 @@ class Permutation {
         // Print all combination using temporary
         // array 'data[]'
         combinationUtil(arr, n, r, 0, data, 0, res);
-        for (int[] array : res){
-            System.out.println("res: " + Arrays.toString(array));
-        }
         return res;
     }
 
