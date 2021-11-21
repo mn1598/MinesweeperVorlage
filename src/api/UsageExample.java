@@ -18,9 +18,9 @@ public class UsageExample {
 			"profi5-30x16-99.txt" };
 
 	public static void main(String[] args) {
-		int k = 14;
+		int k = 22;
 		// use smaller numbers for larger fields
-		int iterations = 1000;
+		int iterations = 100;
 
 		int success = 0;
 		long time = 0;
@@ -45,7 +45,9 @@ public class UsageExample {
 				success++;
 			}
 		}
-		time /= success;
+		if(success > 0) {
+			time /= success;
+		}
 		double rate = (double) success / (double) iterations;
 		System.out.println(fields[k]);
 		System.out.println("Erfolgsquote: " + rate);
