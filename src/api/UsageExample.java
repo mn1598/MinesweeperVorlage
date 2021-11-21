@@ -1,5 +1,4 @@
 package api;
-
 /**
  * An example of how to use a MSAgent to solve the game.
  * You can do whatever you want with this class.
@@ -25,8 +24,9 @@ public class UsageExample {
 
 		int success = 0;
 		for (int i = 0; i < iterations; i++) {
-			MSField f = new MSField("fields/" + fields[0]);
-			MSAgent agent = new RandomMSAgent(f);
+			System.out.println(i + ". Durchlauf");
+			MSField f = new MSField("fields/" + fields[k]);
+			MSAgent agent = new SatMSAgent(f);
 
 			// to see what happens in the first iteration
 			if (i == 0) {
@@ -34,15 +34,19 @@ public class UsageExample {
 			} else {
 				agent.deactivateDisplay();
 			}
-
+			long start = System.currentTimeMillis();
 			boolean solved = agent.solve();
+			long end = System.currentTimeMillis();
+			current = end - start;
 			if (solved) {
+				time += current;
 				success++;
 			}
 		}
+		time /= success;
 		double rate = (double) success / (double) iterations;
+		System.out.println(fields[k]);
 		System.out.println("Erfolgsquote: " + rate);
-
+		System.out.println("Zeit (Schnitt): " + (double)time/1000 + "s");
 	}
-
 }

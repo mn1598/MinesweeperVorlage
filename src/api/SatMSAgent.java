@@ -1,7 +1,6 @@
 package api;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 import org.sat4j.core.VecInt;
 import org.sat4j.pb.SolverFactory;
@@ -10,65 +9,29 @@ import org.sat4j.specs.IProblem;
 import org.sat4j.specs.ISolver;
 import org.sat4j.specs.TimeoutException;
 
-import java.util.Collections;
-import java.util.Random;
-
 /**
  * This agent uncovers positions randomly. It obviously does not use a SAT
  * solver.
  * You can do whatever you want with this class.
  */
-public class RandomMSAgent extends MSAgent {
+public class SatMSAgent extends MSAgent {
 
     private final Random rand;
     private final ArrayList<int[]> knowledgeBase = new ArrayList<int[]>();
     private boolean displayActivated = true;
     private boolean firstDecision = true;
     private int[][] uncovered;
-    private final ArrayList<Integer> pending = new ArrayList<Integer>();
+    private final TreeSet<Integer> pending = new TreeSet<Integer>();
 
-    public RandomMSAgent(MSField field) {
+    public SatMSAgent(MSField field) {
         super(field);
         this.rand = new Random();
     }
 
     public static void main(String[] args) {
-        MSField f = new MSField("fields/" + "baby4-5x5-3.txt");
-        RandomMSAgent r = new RandomMSAgent(f);
-        //System.out.println(r.anzNachbarn(1,1));
-        //r.solve();
-		/*for(int i = 0; i < r.field.getNumOfRows(); i++){
-			for (int j = 0; j < r.field.getNumOfCols(); j++){
-				//System.out.print(r.updateKnowledgeBase(j,i,0) + ", ");
-
-			}
-			System.out.println();
-		}*/
-
-       // r.updateKnowledgeBase(2, 2, 2);
-
-//        int[][] test ={ {-2 , 4, 5},
-//        {2, -4 , 5},
-//        {2, 4, -5},
-//        {-2, -4, 5},
-//        {-2, 4, -5},
-//        {2, -4, -5},
-//        {2,4,5}};
-//        for (int i = 0; i < test.length;i++){
-//            r.knowledgeBase.add(test[i]);
-//        }
-
-
-       /* System.out.println(r.knowledgeBase.size());
-        for (int[] array : r.knowledgeBase) {
-            System.out.println(Arrays.toString(array));
-        }
-		System.out.println(r.satSolve(r.knowledgeBase));*/
-
+        MSField f = new MSField("fields/" + "baby9-7x7-10.txt");
+        SatMSAgent r = new SatMSAgent(f);
         r.solve();
-        /*for (int i = 1; i < 481; i++) {
-        System.out.println(i + ":" + Arrays.toString(r.toCoordinate(i)));
-        }*/
     }
 
     @Override
@@ -92,15 +55,6 @@ public class RandomMSAgent extends MSAgent {
             if (firstDecision) {
                 firstDecision = false;
             } else {
-                //int erg[][] = getClauses(anzNachbarn(x, y), x, y);
-
-                //use SAT solver
-
-                //int[] erg = sat(x,y ,feedback); // TODO: pass values of the field which should be uncovered next
-                //x = erg[0];
-                //y = erg[1];
-
-
                 this.updateKnowledgeBase(x, y, feedback);
                 int anzNach = this.anzNachbarn(x, y);
                 int[] nachbarn = this.getClauses(anzNach, toLiteral(x, y), x, y);
@@ -113,8 +67,8 @@ public class RandomMSAgent extends MSAgent {
                     this.pending.add(nachbarn[i]);
                     this.knowledgeBase.add(new int[] {nachbarn[i] * -1});
                     //this.knowledgeBase.forEach((n) -> {System.out.println(Arrays.toString(n));});
-                    if(this.satSolve(this.knowledgeBase)){
-                        System.out.println("Sichere Wahl gefunden" + nachbarn[i]);
+                    if(!this.satSolve(this.knowledgeBase)){
+                        //System.out.println("Sichere Wahl gefunden" + nachbarn[i]);
                         next = nachbarn[i]; // todo waehle besten nachbarn als naechstes feld
                         //this.knowledgeBase.remove(this.knowledgeBase.size()-1);
                         aufgedeckt = true;
@@ -124,14 +78,17 @@ public class RandomMSAgent extends MSAgent {
 
                 if(!aufgedeckt){
                     // todo es wurde kein neues naechstes Feld gefunden
-                    System.out.println("Problem!");
+                    //System.out.println("Problem!");
                     for(Integer n: pending){
                         this.knowledgeBase.add(new int[] {n * -1});
                         if(this.satSolve(this.knowledgeBase)){
                             next = n;
                             aufgedeckt = true;
+                            this.knowledgeBase.remove(this.knowledgeBase.size() - 1);
+                            break;
+                        }else {
+                            this.knowledgeBase.remove(this.knowledgeBase.size() - 1);
                         }
-                        this.knowledgeBase.remove(this.knowledgeBase.size()-1);
                     }
                 }
 
@@ -143,10 +100,7 @@ public class RandomMSAgent extends MSAgent {
                         next = this.toLiteral(x, y);
                     }while(uncovered[x][y] == -2);
                 }
-                int ind = pending.indexOf(next);
-                if(ind != -1) {
-                    pending.remove(ind);
-                }
+                pending.remove(next);
                 aufgedeckt = false;
                 //System.out.println(next);
                 int[] erg = this.toCoordinate(next); // TODO: pass values of the field which should be uncovered next

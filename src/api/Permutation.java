@@ -1,9 +1,5 @@
-package api;// Java program to print all combination of size
-// r in an array of size n
-import java.io.*;
-import java.lang.reflect.Array;
+package api;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 class Permutation {
 
@@ -92,20 +88,6 @@ class Permutation {
         // array 'data[]'
         combinationUtil(arr, n, r, 0, data, 0, res);
 
-        // Todo
         return res;
     }
-
-    /* Driver function to check for above function */
-    /*
-    public static void main(String[] args)
-    {
-        System.out.println("Start");
-        int arr[] = { 33, 43, 53, 34, 54, 35, 45, 55};
-        int r = 8;
-        int n = arr.length;
-        printCombination(arr, n, r);
-    }
-     */
 }
-/* This code is contributed by Devesh Agrawal */
