@@ -10,6 +10,7 @@ import org.sat4j.specs.IProblem;
 import org.sat4j.specs.ISolver;
 import org.sat4j.specs.TimeoutException;
 
+import java.util.Collections;
 import java.util.Random;
 
 /**
@@ -24,6 +25,7 @@ public class RandomMSAgent extends MSAgent {
     private boolean displayActivated = true;
     private boolean firstDecision = true;
     private int[][] uncovered;
+    private final ArrayList<Integer> pending = new ArrayList<Integer>();
 
     public RandomMSAgent(MSField field) {
         super(field);
@@ -100,10 +102,11 @@ public class RandomMSAgent extends MSAgent {
                 this.updateKnowledgeBase(x, y, feedback);
                 int anzNach = this.anzNachbarn(x, y);
                 int[] nachbarn = this.getClauses(anzNach, toLiteral(x, y), x, y);
+
                 for(int i = 0; i < nachbarn.length; i++){
                     int[] coordinates = this.toCoordinate(nachbarn[i]);
                     if(this.uncovered[coordinates[0]][coordinates[1]] != -2){
-                        continue;
+                            continue;
                     }
                     this.knowledgeBase.add(new int[] {nachbarn[i] * -1});
                     //this.knowledgeBase.forEach((n) -> {System.out.println(Arrays.toString(n));});
@@ -339,6 +342,7 @@ public class RandomMSAgent extends MSAgent {
      */
     public void updateKnowledgeBase(int x, int y, int anzMinen) {
         int literal = toLiteral(x,y);
+        knowledgeBase.add(new int[]{-1 * literal});
         int[] arr;
         if (x == 0 && y == 0 || x == field.getNumOfCols() - 1 && y == 0 || x == 0 && y == field.getNumOfRows() - 1 ||    //Corner fields
                 x == field.getNumOfCols() - 1 && y == field.getNumOfRows() - 1) {
