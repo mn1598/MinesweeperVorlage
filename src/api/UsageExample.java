@@ -18,11 +18,13 @@ public class UsageExample {
 			"profi5-30x16-99.txt" };
 
 	public static void main(String[] args) {
-
+		int k = 14;
 		// use smaller numbers for larger fields
 		int iterations = 1000;
 
 		int success = 0;
+		long time = 0;
+		long current = 0;
 		for (int i = 0; i < iterations; i++) {
 			System.out.println(i + ". Durchlauf");
 			MSField f = new MSField("fields/" + fields[k]);

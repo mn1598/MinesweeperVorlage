@@ -3,21 +3,15 @@ import java.util.ArrayList;
 
 class Permutation {
 
-    /* arr[]  ---> Input Array
-    data[] ---> Temporary array to store current combination
-    start & end ---> Staring and Ending indexes in arr[]
-    index  ---> Current index in data[]
-    r ---> Size of a combination to be printed */
-
     /**
      *
-     * @param arr
-     * @param n
-     * @param r
-     * @param index
-     * @param data
-     * @param i
-     * @param res
+     * @param arr Input Array.
+     * @param n size of array arr.
+     * @param r Number of negative literals.
+     * @param index Current index in data[].
+     * @param data Temporary array to store current combination.
+     * @param i Number of elements in array data.
+     * @param res Array List which contains all clauses.
      */
     static void combinationUtil(int[] arr, int n, int r,
                                 int index, int[] data, int i, ArrayList<int[]> res)
@@ -51,20 +45,6 @@ class Permutation {
         // next (Note that i+1 is passed, but
         // index is not changed)
         combinationUtil(arr, n, r, index, data, i + 1, res);
-    }
-
-    // The main function that prints all combinations
-    // of size r in arr[] of size n. This function
-    // mainly uses combinationUtil()
-    static void printCombination(int arr[], int n, int r)
-    {
-        // A temporary array to store all combination
-        // one by one
-        int data[] = new int[r];
-
-        // Print all combination using temporary
-        // array 'data[]'
-        //combinationUtil(arr, n, r, 0, data, 0);
     }
 
     /**

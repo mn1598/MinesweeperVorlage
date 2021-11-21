@@ -34,6 +34,11 @@ public class SatMSAgent extends MSAgent {
         r.solve();
     }
 
+    /**
+     * Checks whether a field is solvable or not.
+     *
+     * @return true if field is solvable.
+     */
     @Override
     public boolean solve() {
 
@@ -110,20 +115,12 @@ public class SatMSAgent extends MSAgent {
                 y = erg[1];
             }
 
-
             if (displayActivated) {
                 System.out.println("Uncovering (" + x + "," + y + ")");
             }
 
             feedback = field.uncover(x, y);
             uncovered[x][y] = feedback;
-
-			/*for (int i = 0; i < uncovered.length; i++) {
-				for (int j = 0; j < uncovered[i].length ; j++) {
-					System.out.println("(" + i + ", " + j + ") = " + uncovered[i][j]);
-				}
-			}*/
-
 
         } while (feedback >= 0 && !field.solved());
 
@@ -140,80 +137,7 @@ public class SatMSAgent extends MSAgent {
         }
     }
 
-    /**
-     * uncovers all neighboring fields of the current field
-     *
-     * @param x x-Coordinate of current field.
-     * @param y y-Coordinate of current field.
-     */
-    public void uncoverAll(int x, int y) {
-        // TODO
-        int minVal = 0;
-        int nextNachbar = 0;
-        for (int i = 0; i < uncovered.length; i++) {
-            for (int j = 0; j < uncovered[i].length; j++) {
-                if (uncovered [i][j] == minVal){
 
-                } else {
-                    minVal++;
-                }
-            }
-        }
-    }
-
-    /*
-     * Solves al formula.
-     *
-     * @param numMines number of mines mentioned at current field.
-     * @return
-     */
-	/*
-	public int[] sat(int x, int y, int numMines){
-		final int MAXVAR = 1000000;
-		final int NBCLAUSES = 55;
-
-		ISolver solver = SolverFactory.newDefault();
-
-		// prepare the solver to accept MAXVAR variables. MANDATORY for MAXSAT solving
-		solver.newVar(MAXVAR);
-		solver.setExpectedNumberOfClauses(NBCLAUSES);
-		try {
-			solver.addClause(new VecInt(new int[] {-1}));
-		} catch (ContradictionException e) {
-			e.printStackTrace();
-		}
-
-		IProblem problem = solver;
-		int res[] = new int[anzNachbarn(x, y)];
-		try {
-			res = problem.findModel();
-		} catch (TimeoutException e) {
-			e.printStackTrace();
-		}
-		int next = 0;
-		for(int i = 0; i < res.length ; i++){
-			if(res[i] > 0){
-				next = res[i];
-				break;
-			}
-		}
-		// next field e 1..8
-		// uncover 1: x-1, y-1		2: x, y-1		3: x+1, y-1
-		// uncover 4: x-1, y		current			5: x+1, y
-		// uncover 6: x-1, y+1		7: x, y+1		8: x+1, y+1
-		switch(next){
-			case 1: x--; y--; break;
-			case 2: y--; break;
-			case 3: x++; y--; break;
-			case 4: x--; break;
-			case 5: x++; break;
-			case 6: x--; y++; break;
-			case 7: y++; break;
-			case 8: x++; y++;
-		}
-		return new int[] {x, y};
-	}
-	*/
     public boolean satSolve(ArrayList<int[]> input) {
         final int MAXVAR = 500;
         final int NBCLAUSES = input.size();
@@ -234,7 +158,7 @@ public class SatMSAgent extends MSAgent {
             try {
                 solver.addClause(new VecInt(clause)); // adapt Array to IVecInt
             } catch (ContradictionException e) {
-				System.out.println("contradiction detected, returning false");
+				//System.out.println("contradiction detected, returning false");
 				return false;
             }
         }
@@ -295,7 +219,7 @@ public class SatMSAgent extends MSAgent {
      * @return al formula
      */
     public int[] getClauses(int n, int l, int x, int y) {
-        System.out.println("Feld: " + x + ", " + y);
+        //System.out.println("Feld: " + x + ", " + y);
         int[] arr;
         int cols = this.field.getNumOfCols();
 
