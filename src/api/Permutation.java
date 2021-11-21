@@ -19,17 +19,14 @@ class Permutation {
      * @param i
      * @param res
      */
-    static void combinationUtil(int arr[], int n, int r,
-                                int index, int data[], int i, ArrayList<int[]> res)
+    static void combinationUtil(int[] arr, int n, int r,
+                                int index, int[] data, int i, ArrayList<int[]> res)
     {
         // negates literals
         if (index == r) {
 
             int[] copy = new int[arr.length];
             System.arraycopy(arr, 0, copy, 0, copy.length);
-            //copy{2,-4,5}
-            //data{-4}
-            //Arrays.sort(data);
             for (int j = 0, k = 0; j < arr.length && k < data.length; j++) {
                 if (Math.abs(copy[j]) == Math.abs(data[k])){
                     copy[j] = -1 * Math.abs(copy[j]);
@@ -77,12 +74,12 @@ class Permutation {
      * @param r Menge der Literale innerhalb der unterteilten Klauseln
      * @return Klauseln die der KB hinzugefügt werden sollen
      */
-    static ArrayList<int[]> computeClauses(int arr[], int n, int r)
+    static ArrayList<int[]> computeClauses(int[] arr, int n, int r)
     {
         ArrayList<int[]> res = new ArrayList<int[]>();
         // A temporary array to store all combination
         // one by one
-        int data[] = new int[r];
+        int[] data = new int[r];
 
         // Print all combination using temporary
         // array 'data[]'

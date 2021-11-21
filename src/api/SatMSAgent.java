@@ -65,7 +65,7 @@ public class SatMSAgent extends MSAgent {
                             continue;
                     }
                     this.pending.add(nachbarn[i]);
-                    this.knowledgeBase.add(new int[] {nachbarn[i] * -1});
+                    this.knowledgeBase.add(new int[] {nachbarn[i]});
                     //this.knowledgeBase.forEach((n) -> {System.out.println(Arrays.toString(n));});
                     if(!this.satSolve(this.knowledgeBase)){
                         //System.out.println("Sichere Wahl gefunden" + nachbarn[i]);
@@ -76,12 +76,13 @@ public class SatMSAgent extends MSAgent {
                     this.knowledgeBase.remove(this.knowledgeBase.size()-1);
                 }
 
+                //Durchsuche Nachbarn von aufgedeckten Feldern
                 if(!aufgedeckt){
                     // todo es wurde kein neues naechstes Feld gefunden
                     //System.out.println("Problem!");
                     for(Integer n: pending){
-                        this.knowledgeBase.add(new int[] {n * -1});
-                        if(this.satSolve(this.knowledgeBase)){
+                        this.knowledgeBase.add(new int[] {n});
+                        if(!this.satSolve(this.knowledgeBase)){
                             next = n;
                             aufgedeckt = true;
                             this.knowledgeBase.remove(this.knowledgeBase.size() - 1);
@@ -92,13 +93,14 @@ public class SatMSAgent extends MSAgent {
                     }
                 }
 
+                //Waehle ein Feld zufaellig
                 if (!aufgedeckt){
                     do {
                         System.out.println("Zufall!");
                         x = rand.nextInt(numOfCols);
                         y = rand.nextInt(numOfRows);
                         next = this.toLiteral(x, y);
-                    }while(uncovered[x][y] == -2);
+                    }while(uncovered[x][y] != -2);
                 }
                 pending.remove(next);
                 aufgedeckt = false;
@@ -285,7 +287,6 @@ public class SatMSAgent extends MSAgent {
 
     /**
      * calculates the al formula for the sat solver.
-     * // * @param arr array with neighboring fields
      *
      * @param n number of neighbors
      * @param l Literal
@@ -359,7 +360,7 @@ public class SatMSAgent extends MSAgent {
     }
 
     /**
-     * For given coordinates, returns literal value of a field
+     * For given coordinates, returns the corresponding literal value
      * @param x x coordinate
      * @param y y coordinate
      * @return literal value
@@ -368,6 +369,11 @@ public class SatMSAgent extends MSAgent {
         return y * this.field.getNumOfCols() + x + 1;
     }
 
+    /**
+     * For a given literal value, returns the corresponding coordinates
+     * @param literal literal value
+     * @return x and y coordinate
+     */
     public int[] toCoordinate(int literal){
         int[] res = new int[2];
         res[1] = (literal - 1) / this.field.getNumOfCols();
