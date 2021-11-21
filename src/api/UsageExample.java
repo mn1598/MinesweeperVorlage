@@ -25,7 +25,7 @@ public class UsageExample {
 
 		int success = 0;
 		for (int i = 0; i < iterations; i++) {
-			MSField f = new MSField("fields/" + fields[1]);
+			MSField f = new MSField("fields/" + fields[0]);
 			MSAgent agent = new RandomMSAgent(f);
 
 			// to see what happens in the first iteration

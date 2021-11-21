@@ -33,7 +33,7 @@ public class RandomMSAgent extends MSAgent {
     }
 
     public static void main(String[] args) {
-        MSField f = new MSField("fields/" + "baby2-3x3-1.txt");
+        MSField f = new MSField("fields/" + "baby4-5x5-3.txt");
         RandomMSAgent r = new RandomMSAgent(f);
         //System.out.println(r.anzNachbarn(1,1));
         //r.solve();
@@ -66,9 +66,9 @@ public class RandomMSAgent extends MSAgent {
 		System.out.println(r.satSolve(r.knowledgeBase));*/
 
         r.solve();
-        for (int i = 1; i < 481; i++) {
+        /*for (int i = 1; i < 481; i++) {
         System.out.println(i + ":" + Arrays.toString(r.toCoordinate(i)));
-        }
+        }*/
     }
 
     @Override
@@ -76,6 +76,8 @@ public class RandomMSAgent extends MSAgent {
 
         int numOfRows = this.field.getNumOfRows();
         int numOfCols = this.field.getNumOfCols();
+        int next = 1; // deault wert. MUSS vor naechstem Durchgang geaendert werden!!
+        boolean aufgedeckt = false;
         uncovered = new int[numOfCols][numOfRows];
         for (int i = 0; i < uncovered.length; i++) {
             Arrays.fill(uncovered[i], -2);
@@ -98,7 +100,7 @@ public class RandomMSAgent extends MSAgent {
                 //x = erg[0];
                 //y = erg[1];
 
-                int next = 0; // deault wert. MUSS vor naechstem Durchgang geaendert werden!!
+
                 this.updateKnowledgeBase(x, y, feedback);
                 int anzNach = this.anzNachbarn(x, y);
                 int[] nachbarn = this.getClauses(anzNach, toLiteral(x, y), x, y);
@@ -108,16 +110,45 @@ public class RandomMSAgent extends MSAgent {
                     if(this.uncovered[coordinates[0]][coordinates[1]] != -2){
                             continue;
                     }
+                    this.pending.add(nachbarn[i]);
                     this.knowledgeBase.add(new int[] {nachbarn[i] * -1});
                     //this.knowledgeBase.forEach((n) -> {System.out.println(Arrays.toString(n));});
                     if(this.satSolve(this.knowledgeBase)){
-                        next = nachbarn[i];
-                        this.knowledgeBase.remove(this.knowledgeBase.size()-1);
-                        break;
+                        System.out.println("Sichere Wahl gefunden" + nachbarn[i]);
+                        next = nachbarn[i]; // todo waehle besten nachbarn als naechstes feld
+                        //this.knowledgeBase.remove(this.knowledgeBase.size()-1);
+                        aufgedeckt = true;
                     }
                     this.knowledgeBase.remove(this.knowledgeBase.size()-1);
                 }
-                System.out.println(next);
+
+                if(!aufgedeckt){
+                    // todo es wurde kein neues naechstes Feld gefunden
+                    System.out.println("Problem!");
+                    for(Integer n: pending){
+                        this.knowledgeBase.add(new int[] {n * -1});
+                        if(this.satSolve(this.knowledgeBase)){
+                            next = n;
+                            aufgedeckt = true;
+                        }
+                        this.knowledgeBase.remove(this.knowledgeBase.size()-1);
+                    }
+                }
+
+                if (!aufgedeckt){
+                    do {
+                        System.out.println("Zufall!");
+                        x = rand.nextInt(numOfCols);
+                        y = rand.nextInt(numOfRows);
+                        next = this.toLiteral(x, y);
+                    }while(uncovered[x][y] == -2);
+                }
+                int ind = pending.indexOf(next);
+                if(ind != -1) {
+                    pending.remove(ind);
+                }
+                aufgedeckt = false;
+                //System.out.println(next);
                 int[] erg = this.toCoordinate(next); // TODO: pass values of the field which should be uncovered next
                 x = erg[0];
                 y = erg[1];
@@ -256,8 +287,7 @@ public class RandomMSAgent extends MSAgent {
         IProblem problem = solver;
         try {
             if (problem.isSatisfiable()) {
-                System.out.println("Modell gefunden: " + Arrays.toString(solver.model()));
-
+                //System.out.println("Modell gefunden: " + Arrays.toString(solver.model()));
                 return true;
             } else {
                 return false;
