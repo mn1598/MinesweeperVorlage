@@ -161,6 +161,17 @@ public class RandomMSAgent extends MSAgent {
      */
     public void uncoverAll(int x, int y) {
         // TODO
+        int minVal = 0;
+        int nextNachbar = 0;
+        for (int i = 0; i < uncovered.length; i++) {
+            for (int j = 0; j < uncovered[i].length; j++) {
+                if (uncovered [i][j] == minVal){
+
+                } else {
+                    minVal++;
+                }
+            }
+        }
     }
 
     /*
